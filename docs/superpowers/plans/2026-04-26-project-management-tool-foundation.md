@@ -336,6 +336,7 @@ Create `packages/tsconfig/nestjs.json`:
   "extends": "./base.json",
   "compilerOptions": {
     "module": "CommonJS",
+    "moduleResolution": "Node",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -352,7 +353,13 @@ Create `packages/eslint-config/package.json`:
 {
   "name": "@project-management-tool/eslint-config",
   "version": "0.0.0",
-  "private": true
+  "private": true,
+  "peerDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^8.57.0 || ^9.0.0",
+    "eslint-config-next": "^15.0.0"
+  }
 }
 ```
 
@@ -369,7 +376,15 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module"
-  }
+  },
+  overrides: [
+    {
+      files: ["**/*.ts", "**/*.tsx"],
+      parser: "@typescript-eslint/parser",
+      plugins: ["@typescript-eslint"],
+      extends: ["plugin:@typescript-eslint/recommended"]
+    }
+  ]
 };
 ```
 
@@ -421,7 +436,7 @@ export const requiredEnv = (value: string | undefined, name: string) => {
 Create `packages/config/src/index.ts`:
 
 ```ts
-export * from "./env";
+export * from "./env.js";
 ```
 
 Create `packages/types/package.json`:
@@ -1321,3 +1336,5 @@ git commit -m "chore: verify monorepo foundation"
 - Shared health contract is defined in `packages/types/src/health.ts`
 - API health endpoint returns the same `HealthResponse` type
 - Worker queue naming stays isolated to the worker scaffold and does not conflict with API contracts
+- Shared Nest/worker TypeScript consumers require `moduleResolution: "Node"` in the shared Nest tsconfig, so the Task 2 plan reflects that corrected baseline
+- Shared Nest/worker ESLint consumers require TypeScript-aware parser and plugin settings in the shared base config, so the Task 2 plan reflects that corrected baseline
