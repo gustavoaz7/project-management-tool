@@ -7,3 +7,4 @@
 - `pnpm lint`
 - `pnpm test`
 - `pnpm build`
+- `pnpm format`
