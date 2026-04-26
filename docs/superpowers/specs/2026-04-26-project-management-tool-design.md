@@ -380,6 +380,45 @@ Use optimistic locking on key mutable records such as issues to teach realistic 
 - Reads may use query shapes optimized for UI use cases
 - Dedicated read queries per screen are acceptable and preferred over forcing all access through generic repository abstractions
 
+## Repository Organization
+
+The project should use a Turborepo-based monorepo.
+
+### Recommended Layout
+
+```text
+project-management-tool/
+  apps/
+    web/                -> Next.js frontend
+    api/                -> NestJS backend API
+    worker/             -> background jobs and async processing
+  packages/
+    types/              -> shared contracts and DTOs
+    config/             -> shared config helpers
+    eslint-config/      -> shared linting rules
+    tsconfig/           -> shared TypeScript base configs
+    ui/                 -> optional shared UI package
+  infra/
+    docker/
+    terraform/          -> later, when deployment matures
+  docs/
+    superpowers/specs/
+  scripts/
+  turbo.json
+  package.json
+  pnpm-workspace.yaml
+```
+
+### Repository Principles
+
+- Keep web, API, and worker as separate deployable applications
+- Share contracts and tooling, not backend implementation internals
+- Treat `packages/ui` as optional rather than mandatory
+- Avoid creating large catch-all shared packages
+- Preserve explicit ownership boundaries between applications
+
+This monorepo approach is preferred because it keeps the whole system easy to evolve together while still preserving realistic deployable boundaries.
+
 ## Technology Stack
 
 ### Recommended Stack
@@ -397,7 +436,7 @@ Use optimistic locking on key mutable records such as issues to teach realistic 
 
 This stack is recommended because it is production-realistic, widely transferable, and exposes the right concepts without requiring excessive setup or premature complexity.
 
-The API could also be built with Fastify instead of NestJS if lower-level control is prioritized over framework guidance, but NestJS is the recommended default for this learning project because it makes module structure, dependency boundaries, and controller-service flows more explicit.
+NestJS is the selected API framework for this project because it provides strong modular structure, explicit architectural conventions, and a good fit for the modular monolith shape. It supports the learning goal of understanding a production-style backend organized around modules, controllers, services, validation, and dependency boundaries.
 
 ## Runtime Topology
 
