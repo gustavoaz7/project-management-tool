@@ -695,6 +695,7 @@ git commit -m "feat: scaffold next web app"
 - Create: `apps/api/package.json`
 - Create: `apps/api/tsconfig.json`
 - Create: `apps/api/tsconfig.build.json`
+- Create: `apps/api/jest.config.ts`
 - Create: `apps/api/nest-cli.json`
 - Create: `apps/api/.eslintrc.js`
 - Create: `apps/api/src/main.ts`
@@ -708,6 +709,7 @@ git commit -m "feat: scaffold next web app"
 - Create: `apps/api/src/modules/health/health.module.ts`
 - Create: `apps/api/prisma/schema.prisma`
 - Create: `apps/api/test/health.e2e-spec.ts`
+- Modify: `pnpm-lock.yaml`
 
 - [ ] **Step 1: Write the failing API health test**
 
@@ -736,14 +738,15 @@ describe("HealthController", () => {
   });
 
   it("returns API health", async () => {
-    await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .get("/health")
-      .expect(200)
-      .expect({
-        service: "api",
-        status: "ok",
-        timestamp: expect.any(String)
-      });
+      .expect(200);
+
+    expect(response.body).toEqual({
+      service: "api",
+      status: "ok",
+      timestamp: expect.any(String)
+    });
   });
 });
 ```
@@ -809,7 +812,10 @@ Create `apps/api/tsconfig.json`:
 {
   "extends": "@project-management-tool/tsconfig/nestjs.json",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@project-management-tool/types": ["../../packages/types/src/index.ts"]
+    }
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }
@@ -822,6 +828,24 @@ Create `apps/api/tsconfig.build.json`:
   "extends": "./tsconfig.json",
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }
+```
+
+Create `apps/api/jest.config.ts`:
+
+```ts
+import type { Config } from "jest";
+
+const config: Config = {
+  moduleFileExtensions: ["js", "json", "ts"],
+  rootDir: ".",
+  testRegex: ".*\\.e2e-spec\\.ts$",
+  transform: {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  testEnvironment: "node"
+};
+
+export default config;
 ```
 
 Create `apps/api/nest-cli.json`:
@@ -884,11 +908,14 @@ Create `apps/api/src/platform/db/prisma.service.ts`:
 ```ts
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
+import { apiEnv } from "../config/env";
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
-    await this.$connect();
+    if (apiEnv.databaseUrl) {
+      await this.$connect();
+    }
   }
 }
 ```
@@ -988,6 +1015,8 @@ pnpm --filter api test
 ```
 
 Expected: PASS with one passing `/health` e2e test.
+
+Note: if dependency installation is required to execute the test, allow `pnpm-lock.yaml` to update as part of the task.
 
 - [ ] **Step 5: Commit**
 
