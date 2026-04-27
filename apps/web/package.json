@@ -5,7 +5,7 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint app lib next.config.js vitest.config.ts vitest.setup.ts",
     "test": "vitest run"
   },
   "dependencies": {
@@ -15,6 +15,8 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.39.1",
     "@project-management-tool/eslint-config": "workspace:*",
     "@project-management-tool/tsconfig": "workspace:*",
     "@testing-library/jest-dom": "^6.6.3",

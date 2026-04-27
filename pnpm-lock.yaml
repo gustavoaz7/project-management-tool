@@ -36,6 +36,12 @@ importers:
         specifier: ^7.8.1
         version: 7.8.2
     devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.3.1
+        version: 3.3.5
+      '@eslint/js':
+        specifier: ^9.39.1
+        version: 9.39.4
       '@nestjs/cli':
         specifier: ^10.4.8
         version: 10.4.9
@@ -94,6 +100,12 @@ importers:
         specifier: ^19.0.0
         version: 19.2.5(react@19.2.5)
     devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.3.1
+        version: 3.3.5
+      '@eslint/js':
+        specifier: ^9.39.1
+        version: 9.39.4
       '@project-management-tool/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -137,6 +149,12 @@ importers:
         specifier: ^5.4.2
         version: 5.10.1
     devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.3.1
+        version: 3.3.5
+      '@eslint/js':
+        specifier: ^9.39.1
+        version: 9.39.4
       '@project-management-tool/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config

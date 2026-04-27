@@ -1,5 +1,10 @@
 # Project Management Tool
 
+## Requirements
+
+- Node.js `20.x`
+- pnpm `10.x`
+
 ## Workspace Commands
 
 - `pnpm install`
@@ -21,3 +26,10 @@
 1. `docker compose -f infra/docker/docker-compose.yml up -d`
 2. `pnpm install`
 3. `pnpm dev`
+
+## Foundation Verification
+
+- `pnpm lint`
+- `pnpm test`
+- `pnpm build`
+- `GET /health` returns `200`

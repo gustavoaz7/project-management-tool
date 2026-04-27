@@ -20,6 +20,8 @@
     "@project-management-tool/types": "workspace:*"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.39.1",
     "@nestjs/cli": "^10.4.8",
     "@nestjs/testing": "^10.4.15",
     "@project-management-tool/eslint-config": "workspace:*",

@@ -13,6 +13,8 @@
     "ioredis": "^5.4.2"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.39.1",
     "@project-management-tool/eslint-config": "workspace:*",
     "@project-management-tool/tsconfig": "workspace:*",
     "@types/node": "^22.10.2",
