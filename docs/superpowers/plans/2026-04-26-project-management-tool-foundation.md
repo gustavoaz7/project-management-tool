@@ -36,8 +36,8 @@
 - Create: `packages/config/src/env.ts`
 - Create: `packages/config/src/index.ts`
 - Create: `packages/types/package.json`
-- Create: `packages/types/src/health.ts`
-- Create: `packages/types/src/index.ts`
+- Create: `packages/types/src/health.d.ts`
+- Create: `packages/types/src/index.d.ts`
 
 ### Web app
 
@@ -253,12 +253,12 @@ git commit -m "chore: scaffold turbo workspace root"
 - Create: `packages/config/src/env.ts`
 - Create: `packages/config/src/index.ts`
 - Create: `packages/types/package.json`
-- Create: `packages/types/src/health.ts`
-- Create: `packages/types/src/index.ts`
+- Create: `packages/types/src/health.d.ts`
+- Create: `packages/types/src/index.d.ts`
 
 - [ ] **Step 1: Write the failing package import test**
 
-Create `packages/types/src/health.ts`:
+Create `packages/types/src/health.d.ts`:
 
 ```ts
 export type HealthResponse = {
@@ -268,7 +268,7 @@ export type HealthResponse = {
 };
 ```
 
-Create `packages/types/src/index.ts`:
+Create `packages/types/src/index.d.ts`:
 
 ```ts
 export * from "./health";
@@ -337,12 +337,12 @@ Create `packages/tsconfig/nestjs.json`:
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "Node",
+    "noEmit": false,
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "sourceMap": true,
-    "outDir": "dist"
+    "sourceMap": true
   }
 }
 ```
@@ -447,8 +447,9 @@ Create `packages/types/package.json`:
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "types": "./src/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.d.ts"
   }
 }
 ```
@@ -812,10 +813,7 @@ Create `apps/api/tsconfig.json`:
 {
   "extends": "@project-management-tool/tsconfig/nestjs.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@project-management-tool/types": ["../../packages/types/src/index.ts"]
-    }
+    "baseUrl": "."
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }
@@ -826,6 +824,10 @@ Create `apps/api/tsconfig.build.json`:
 ```json
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }
 ```
@@ -885,11 +887,10 @@ Create `apps/api/src/app.module.ts`:
 ```ts
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "./platform/db/prisma.module";
-import { QueueModule } from "./platform/queue/queue.module";
 import { HealthModule } from "./modules/health/health.module";
 
 @Module({
-  imports: [PrismaModule, QueueModule, HealthModule]
+  imports: [PrismaModule, HealthModule]
 })
 export class AppModule {}
 ```
@@ -1401,8 +1402,10 @@ git commit -m "chore: verify monorepo foundation"
 
 ### Type Consistency
 
-- Shared health contract is defined in `packages/types/src/health.ts`
+- Shared health contract is defined in `packages/types/src/health.d.ts`
 - API health endpoint returns the same `HealthResponse` type
 - Worker queue naming stays isolated to the worker scaffold and does not conflict with API contracts
 - Shared Nest/worker TypeScript consumers require `moduleResolution: "Node"` in the shared Nest tsconfig, so the Task 2 plan reflects that corrected baseline
+- Nest build consumers must define app-local emit paths in their build tsconfig instead of inheriting `outDir` from the shared Nest preset, so the Task 2 and Task 4 plan entries reflect that corrected baseline
+- Shared contracts are modeled as a declaration-only package, so Task 2 and Task 4 do not depend on cross-package source path mappings during Nest builds
 - Shared Nest/worker ESLint consumers require TypeScript-aware parser and plugin settings in the shared base config, so the Task 2 plan reflects that corrected baseline
