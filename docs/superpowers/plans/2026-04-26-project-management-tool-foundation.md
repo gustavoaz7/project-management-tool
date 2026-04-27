@@ -1100,9 +1100,11 @@ Create `apps/worker/tsconfig.json`:
 {
   "extends": "@project-management-tool/tsconfig/nestjs.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "rootDir": "src"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"]
 }
 ```
 
@@ -1409,3 +1411,4 @@ git commit -m "chore: verify monorepo foundation"
 - Nest build consumers must define app-local emit paths in their build tsconfig instead of inheriting `outDir` from the shared Nest preset, so the Task 2 and Task 4 plan entries reflect that corrected baseline
 - Shared contracts are modeled as a declaration-only package, so Task 2 and Task 4 do not depend on cross-package source path mappings during Nest builds
 - Shared Nest/worker ESLint consumers require TypeScript-aware parser and plugin settings in the shared base config, so the Task 2 plan reflects that corrected baseline
+- Worker TypeScript builds must exclude `src/**/*.test.ts` so runtime output does not ship test artifacts, so the Task 5 plan reflects that corrected baseline
