@@ -774,15 +774,15 @@ Create `apps/api/package.json`:
     "build": "nest build",
     "start": "node dist/main.js",
     "lint": "eslint \"{src,test}/**/*.ts\"",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "prisma:generate": "prisma generate",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.15",
     "@nestjs/core": "^10.4.15",
     "@nestjs/platform-express": "^10.4.15",
     "@prisma/client": "^6.0.1",
-    "bullmq": "^5.34.0",
-    "ioredis": "^5.4.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "@project-management-tool/types": "workspace:*"
@@ -870,10 +870,11 @@ Create `apps/api/src/main.ts`:
 ```ts
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
+import { apiEnv } from "./platform/config/env";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.API_PORT ?? 3001);
+  await app.listen(apiEnv.port);
 }
 
 void bootstrap();
@@ -898,7 +899,6 @@ Create `apps/api/src/platform/config/env.ts`:
 ```ts
 export const apiEnv = {
   databaseUrl: process.env.DATABASE_URL ?? "",
-  redisUrl: process.env.REDIS_URL ?? "redis://localhost:6379",
   port: Number(process.env.API_PORT ?? 3001)
 };
 ```
