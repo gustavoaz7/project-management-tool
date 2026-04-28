@@ -99,11 +99,11 @@ describe("IssuesController", () => {
     expect(prismaMock.issue.create).not.toHaveBeenCalled();
   });
 
-  it("returns 400 for an empty title", async () => {
+  it("returns 400 for a whitespace-only title", async () => {
     await request(app.getHttpServer())
       .post("/projects/proj_123/issues")
       .send({
-        title: ""
+        title: "   "
       })
       .expect(400);
 

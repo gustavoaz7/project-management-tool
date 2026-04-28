@@ -1,3 +1,4 @@
+import { Transform } from "class-transformer";
 import { IsEnum, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 export enum CreateIssuePriority {
@@ -8,11 +9,13 @@ export enum CreateIssuePriority {
 }
 
 export class CreateIssueDto {
+  @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
   @IsString()
   @MinLength(1)
   @MaxLength(200)
   title!: string;
 
+  @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
   @IsOptional()
   @IsString()
   @MaxLength(4000)

@@ -20,8 +20,8 @@ export class IssuesService {
     const issue = await this.prisma.issue.create({
       data: {
         projectId,
-        title: dto.title.trim(),
-        description: dto.description?.trim() || null,
+        title: dto.title,
+        description: dto.description || null,
         priority: (dto.priority as IssuePriority | undefined) ?? "MEDIUM"
       }
     });

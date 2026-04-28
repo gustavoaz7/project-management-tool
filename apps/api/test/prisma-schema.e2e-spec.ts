@@ -8,7 +8,7 @@ describe("Prisma schema", () => {
 
     expect(schema).toContain("@@unique([id, organizationId])");
     expect(schema).toContain(
-      "team           Team?        @relation(fields: [teamId, organizationId], references: [id, organizationId], onDelete: SetNull)"
+      "team           Team?        @relation(fields: [teamId, organizationId], references: [id, organizationId], onDelete: Restrict)"
     );
   });
 });
