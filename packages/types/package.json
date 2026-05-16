@@ -1,0 +1,10 @@
+{
+  "name": "@project-management-tool/types",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": "./src/index.d.ts"
+  }
+}

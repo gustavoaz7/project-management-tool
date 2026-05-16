@@ -1,0 +1,7 @@
+{
+  "extends": "@project-management-tool/tsconfig/nestjs.json",
+  "compilerOptions": {
+    "baseUrl": "."
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}

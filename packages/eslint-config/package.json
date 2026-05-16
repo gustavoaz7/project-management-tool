@@ -1,0 +1,11 @@
+{
+  "name": "@project-management-tool/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "peerDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^8.57.0 || ^9.0.0",
+    "eslint-config-next": "^15.0.0"
+  }
+}
