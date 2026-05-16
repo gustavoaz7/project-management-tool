@@ -6,6 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint app lib next.config.js vitest.config.ts vitest.setup.ts",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {

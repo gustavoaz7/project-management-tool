@@ -10,9 +10,9 @@
 - `pnpm install`
 - `pnpm dev`
 - `pnpm lint`
+- `pnpm typecheck`
 - `pnpm test`
 - `pnpm build`
-- `pnpm format`
 
 ## Local Services
 
@@ -27,9 +27,15 @@
 2. `pnpm install`
 3. `pnpm dev`
 
-## Foundation Verification
+## Verification
 
 - `pnpm lint`
+- `pnpm typecheck`
 - `pnpm test`
 - `pnpm build`
 - `GET /health` returns `200`
+
+## CI
+
+- Pull requests run `lint`, `typecheck`, `test`, and `build` as separate jobs in GitHub Actions.
+- Direct pushes to `main` should be blocked with branch protection so CI passes before merge.
