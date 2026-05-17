@@ -153,6 +153,10 @@ export class IssuesService {
       data.status = dto.status;
     }
 
+    if (!Object.keys(data).length) {
+      throw new BadRequestException("At least one field must be provided to update an issue.");
+    }
+
     return this.runInTransaction(async (prisma) => {
       const updatedIssue = await prisma.issue.update({
         where: {
