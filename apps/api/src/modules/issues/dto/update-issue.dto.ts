@@ -1,13 +1,14 @@
-import { IssuePriority } from "@prisma/client";
+import { IssuePriority, IssueStatus } from "@prisma/client";
 import { Transform } from "class-transformer";
 import { IsEnum, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
-export class CreateIssueDto {
+export class UpdateIssueDto {
   @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
+  @IsOptional()
   @IsString()
   @MinLength(1)
   @MaxLength(200)
-  title!: string;
+  title?: string;
 
   @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
   @IsOptional()
@@ -18,4 +19,8 @@ export class CreateIssueDto {
   @IsOptional()
   @IsEnum(IssuePriority)
   priority?: IssuePriority;
+
+  @IsOptional()
+  @IsEnum(IssueStatus)
+  status?: IssueStatus;
 }
