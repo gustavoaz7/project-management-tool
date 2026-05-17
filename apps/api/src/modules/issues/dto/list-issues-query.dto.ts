@@ -1,13 +1,12 @@
+import { IssuePriority, IssueStatus } from "@prisma/client";
 import { IsEnum, IsOptional } from "class-validator";
-import { CreateIssuePriority } from "./create-issue.dto";
-import { UpdateIssueStatus } from "./update-issue.dto";
 
 export class ListIssuesQueryDto {
   @IsOptional()
-  @IsEnum(UpdateIssueStatus)
-  status?: UpdateIssueStatus;
+  @IsEnum(IssueStatus)
+  status?: IssueStatus;
 
   @IsOptional()
-  @IsEnum(CreateIssuePriority)
-  priority?: CreateIssuePriority;
+  @IsEnum(IssuePriority)
+  priority?: IssuePriority;
 }

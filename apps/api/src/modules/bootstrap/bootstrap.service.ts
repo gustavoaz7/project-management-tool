@@ -7,7 +7,7 @@ export class BootstrapService {
   constructor(private readonly prisma: PrismaService) {}
 
   async bootstrapWorkspace(dto: BootstrapWorkspaceDto) {
-    return this.prisma.$transaction(async (tx: any) => {
+    return this.prisma.$transaction(async (tx) => {
       const organization = await tx.organization.create({
         data: {
           name: dto.organizationName

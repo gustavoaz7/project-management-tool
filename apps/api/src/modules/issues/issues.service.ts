@@ -1,18 +1,10 @@
+import { ActivityEventType, IssuePriority, IssueStatus, Prisma } from "@prisma/client";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../platform/db/prisma.service";
 import { CreateIssueCommentDto } from "./dto/create-issue-comment.dto";
 import { CreateIssueDto } from "./dto/create-issue.dto";
 import { ListIssuesQueryDto } from "./dto/list-issues-query.dto";
 import { UpdateIssueDto } from "./dto/update-issue.dto";
-
-type IssuePriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
-type IssueStatus = "BACKLOG" | "TODO" | "IN_PROGRESS" | "DONE";
-type ActivityEventType = "ISSUE_CREATED" | "ISSUE_UPDATED" | "COMMENT_ADDED";
-type PrismaTransactionClient = {
-  issue: PrismaService["issue"];
-  issueComment: PrismaService["issueComment"];
-  activityEvent: PrismaService["activityEvent"];
-};
 
 const allowedStatusTransitions: Record<IssueStatus, IssueStatus[]> = {
   BACKLOG: ["TODO", "IN_PROGRESS"],
@@ -41,7 +33,7 @@ export class IssuesService {
   }
 
   private async appendActivityEvent(
-    prisma: PrismaTransactionClient,
+    prisma: Prisma.TransactionClient,
     issueId: string,
     type: ActivityEventType,
     summary: string,
@@ -57,12 +49,8 @@ export class IssuesService {
     });
   }
 
-  private async runInTransaction<T>(callback: (prisma: PrismaTransactionClient) => Promise<T>) {
-    if (typeof this.prisma.$transaction === "function") {
-      return this.prisma.$transaction((tx: unknown) => callback(tx as PrismaTransactionClient));
-    }
-
-    return callback(this.prisma as unknown as PrismaTransactionClient);
+  private async runInTransaction<T>(callback: (prisma: Prisma.TransactionClient) => Promise<T>) {
+    return this.prisma.$transaction((tx) => callback(tx));
   }
 
   async listIssues(projectId: string, query: ListIssuesQueryDto) {
@@ -78,8 +66,8 @@ export class IssuesService {
     return this.prisma.issue.findMany({
       where: {
         projectId,
-        ...(query.status ? { status: query.status as IssueStatus } : {}),
-        ...(query.priority ? { priority: query.priority as IssuePriority } : {})
+        ...(query.status ? { status: query.status } : {}),
+        ...(query.priority ? { priority: query.priority } : {})
       },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }]
     });
@@ -123,7 +111,7 @@ export class IssuesService {
           projectId,
           title: dto.title,
           description: dto.description || null,
-          priority: (dto.priority as IssuePriority | undefined) ?? "MEDIUM"
+          priority: dto.priority ?? IssuePriority.MEDIUM
         }
       });
 
@@ -137,22 +125,17 @@ export class IssuesService {
     const issue = await this.getIssueOrThrow(projectId, issueId);
 
     if (dto.status && dto.status !== issue.status) {
-      const currentStatus = issue.status as IssueStatus;
+      const currentStatus = issue.status;
       const allowedTransitions = allowedStatusTransitions[currentStatus];
 
-      if (!allowedTransitions.includes(dto.status as IssueStatus)) {
+      if (!allowedTransitions.includes(dto.status)) {
         throw new BadRequestException(
           `Issue ${issueId} cannot transition from ${currentStatus} to ${dto.status}.`
         );
       }
     }
 
-    const data: {
-      title?: string;
-      description?: string | null;
-      priority?: IssuePriority;
-      status?: IssueStatus;
-    } = {};
+    const data: Prisma.IssueUpdateInput = {};
 
     if (dto.title !== undefined) {
       data.title = dto.title;
@@ -163,11 +146,11 @@ export class IssuesService {
     }
 
     if (dto.priority !== undefined) {
-      data.priority = dto.priority as IssuePriority;
+      data.priority = dto.priority;
     }
 
     if (dto.status !== undefined) {
-      data.status = dto.status as IssueStatus;
+      data.status = dto.status;
     }
 
     return this.runInTransaction(async (prisma) => {
